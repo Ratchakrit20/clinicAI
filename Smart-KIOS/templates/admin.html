@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- เพิ่ม link ไปยัง DataTables CSS -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.min.css"
+    />
+
+    <script
+      type="text/javascript"
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+    ></script>
+    <!-- เพิ่ม script ไปยัง DataTables JS -->
+    <script
+      type="text/javascript"
+      src="https://cdn.datatables.net/2.0.1/js/dataTables.min.js"
+    ></script>
+
+    <title>Admin Page</title>
+    <style>
+      /* styles.css */
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 0;
+      }
+
+      .blur-background {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        background-image: url("https://i.pinimg.com/originals/32/ba/d4/32bad4902880c35411aa8ffa657c170c.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        /*filter: blur(10px);*/
+        overflow: auto; /* เพิ่ม overflow: hidden เพื่อป้องกันการแสดงเลื่อนบาร์เลื่อน */
+      }
+      
+      /* ปรับแต่งสไตล์ของรูปภาพใน div */
+      .blur-background img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: blur(5px); /* ใช้กรอง blur ในรูปภาพเอง */
+      }
+
+      .container {
+        width: 80%;
+        /* height: 100vh; */
+        margin: 20px auto;
+      }
+
+      h1 {
+        text-align: center;
+        /* margin-top: 30px; */
+        margin-bottom: 30px;
+        color: #fff;
+      }
+
+      form {
+        margin-bottom: 20px;
+        background-color: rgba(255, 255, 255, 0.681);
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      form:hover {
+        background-color: #f5f5f5;
+      }
+
+      
+
+      /* .table-ani{
+            transition: all 0.3s ease;
+        } */
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: rgba(255, 255, 255, 0.681);
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      th,
+      td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #f2f2f2;
+        text-align: left;
+      }
+
+      tr:hover {
+        background-color: #f5f5f5;
+        transition: all 0.3s ease;
+      }
+
+      .delete-form {
+        display: inline-block;
+      }
+
+      .flex-container{
+        display:flex;
+        flex-wrap:wrap;
+        gap;8px
+      }
+      
+
+      
+      .id{
+        flex:1 0 140px;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .text{
+        flex:1 0 120px;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .flex-container button{
+        flex:1 0 60px;
+        background-color: #4caf50;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      div.buttonposition{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+      }
+      .button1 {
+        margin: 5px;
+        background-color: #4caf50;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      @media only screen and (max-width: 600px) {
+        .container {
+          width: 80%;
+        }
+
+        form {
+          width: 80%;
+          margin: 0 auto 20px auto;
+        }
+
+        form input[type="text"] {
+          width: calc(100% - 20px);
+        }
+
+        table {
+          width: 90%;
+          margin: 0 auto;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="blur-background">
+      <br />
+      <h1>Admin Page</h1>
+      <div class="container">
+        <table id="yourTableId">
+          <thead>
+            <tr>
+              <th>Question ID</th>
+              <th>Question</th>
+              <th>Answer ID</th>
+              <th>Answer Text</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- ข้อมูลจะถูกเพิ่มที่นี่ -->
+          </tbody>
+        </table>
+        <script>
+          const requestOptions = {
+            method: "GET",
+            redirect: "follow",
+          };
+
+          fetch(
+            "http://localhost/api/Smart-KIOS/api/select_questionanswer.php",
+            requestOptions
+          )
+            .then((response) => response.json())
+            .then((result) => {
+              //console.log(result);
+              // ตรวจสอบว่า result ไม่เป็น null หรือ undefined
+              if (result) {
+                // วนลูปผลลัพธ์
+                result.forEach((q) => {
+                  //console.log(q);
+
+                  // สร้าง <tr> ใน HTML
+                  var tr = document.createElement("tr");
+
+                  // สร้าง <td> และใส่ข้อมูลลงไป
+                  var tdQuestionID = document.createElement("td");
+                  tdQuestionID.textContent = q.questionID;
+                  tr.appendChild(tdQuestionID);
+
+                  var tdQuestion = document.createElement("td");
+                  tdQuestion.textContent = q.question;
+                  tr.appendChild(tdQuestion);
+
+                  var tdAnswerID = document.createElement("td");
+                  tdAnswerID.textContent = q.answerID;
+                  tr.appendChild(tdAnswerID);
+
+                  var tdAnswerTEXT = document.createElement("td");
+                  tdAnswerTEXT.textContent = q.answerTEXT;
+                  tr.appendChild(tdAnswerTEXT);
+
+                  // เพิ่ม <tr> ลงใน tbody ของตาราง
+                  document
+                    .getElementById("yourTableId")
+                    .getElementsByTagName("tbody")[0]
+                    .appendChild(tr);
+
+                  // เรียกใช้ DataTables
+                  $(document).ready(function () {
+                    // ตรวจสอบว่า DataTable ยังไม่ถูกเริ่ม
+                    if (!$.fn.DataTable.isDataTable("#yourTableId")) {
+                      $("#yourTableId").DataTable({
+                        data: result,
+                        columns: [
+                          { data: "questionID" },
+                          { data: "question" },
+                          { data: "answerID" },
+                          { data: "answerTEXT" },
+                        ],
+                        paging: true, // ตรวจสอบให้แน่ใจว่า paging ถูกเปิดใช้งาน
+                        language: {
+                          // กำหนดข้อความและปุ่มใน DataTable
+
+                          paginate: {
+                            first: "First",
+                            previous: "Back",
+                            next: "Next",
+                            last: "Last",
+                          },
+                        },
+                      });
+                    }
+                  });
+                });
+              }
+            })
+            .catch((error) => console.error(error));
+        </script>
+        <script></script>
+        <form onsubmit="event.preventDefault(); sendQuestionToServer();">
+          <div class="flex-container">
+            <input class="id" type="text" id="questionid" name="questionid" placeholder="Question Id" required/>
+            <input class="text" type="text" id="question" name="question" placeholder="Question Text" required/>
+            <button type="submit">Add Question</button>
+          </div>
+          
+        </form>
+        <form onsubmit="event.preventDefault(); sendAnswerToServer();">
+          <div class="flex-container">
+          <input class="id" type="text" id="answerid" name="answerid" placeholder="Answer Id" required/>
+          <input class="text" type="text" id="answer" name="answer" placeholder="Answer Text" required/>
+          <button type="submit">Add Answer</button>
+          </div>
+        </form>
+        <div class="buttonposition">
+          <button class="button1" type="button" onclick="goBack()">Back</button>
+          <script>
+              function goBack() {
+                window.history.back();
+              }
+          </script>
+          <a href="add_patient.html">
+            <button class="button1" type="button">Add a Patient</button>
+          </a>
+        </div>
+        <script>
+          function sendQuestionToServer() {
+            // รับค่าจากฟอร์ม
+            const text = document.getElementById("question").value;
+            const questionId = document.getElementById("questionid").value;
+
+            // ตรวจสอบค่าที่ได้รับ
+            console.log("text", text);
+            console.log("questionId", questionId);
+
+            // ตัวอย่างการเรียกใช้งานฟังก์ชันสำหรับส่งข้อมูลไปยังเซิร์ฟเวอร์
+            sendUpdateQuestionToServer(text, questionId);
+          }
+          function sendUpdateQuestionToServer(text, questionId) {
+            // กำหนดข้อมูลที่ต้องการส่ง
+            console.log("text", text);
+            console.log("questionId", questionId);
+            const update = new URLSearchParams();
+            update.append("text", text);
+            update.append("questionId", questionId);
+            console.log("data", update);
+            const requestOptions = {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+              body: update,
+              redirect: "follow",
+            };
+
+            // กำหนด URL ที่ถูกต้อง
+            const url =
+              "http://localhost/api/Smart-KIOS/api/UPDATE_question.php";
+
+            fetch(url, requestOptions)
+              .then((response) => response.text())
+              .then((update) => {
+                console.log(update);
+                // เรียกใช้ฟังก์ชันอัปเดตตาราง
+                updateTable();
+              })
+              .catch((error) => console.error(error));
+          }
+
+          function sendAnswerToServer() {
+            // รับค่าจากฟอร์ม
+            const text = document.getElementById("answer").value;
+            const answerid = document.getElementById("answerid").value;
+
+            // ตรวจสอบค่าที่ได้รับ
+            console.log("text", text);
+            console.log("answerid", answerid);
+
+            // ตัวอย่างการเรียกใช้งานฟังก์ชันสำหรับส่งข้อมูลไปยังเซิร์ฟเวอร์
+            sendUpdateAnswerToServer(text, answerid);
+          }
+          function sendUpdateAnswerToServer(text, answerid) {
+            // กำหนดข้อมูลที่ต้องการส่ง
+            console.log("text", text);
+            console.log("answerid", answerid);
+            const update = new URLSearchParams();
+            update.append("text", text);
+            update.append("answerid", answerid);
+            console.log("data", update);
+            const requestOptions = {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+              body: update,
+              redirect: "follow",
+            };
+
+            // กำหนด URL ที่ถูกต้อง
+            const url =
+              "http://localhost/api/Smart-KIOS/api/UPDATE_answer.php";
+
+            fetch(url, requestOptions)
+              .then((response) => response.text())
+              .then((update) => {
+                console.log(update);
+                // เรียกใช้ฟังก์ชันอัปเดตตาราง
+                updateTable();
+              })
+              .catch((error) => console.error(error));
+          }
+
+          function updateTable() {
+            const requestOptions = {
+              method: "GET",
+              redirect: "follow",
+            };
+
+            fetch(
+              "http://localhost/api/Smart-KIOS/api/select_questionanswer.php",
+              requestOptions
+            )
+              .then((response) => response.json())
+              .then((result) => {
+                // เรียกใช้ DataTables
+                $(document).ready(function () {
+                  // ตรวจสอบว่า DataTable ยังไม่ถูกเริ่ม
+                  if (!$.fn.DataTable.isDataTable("#yourTableId")) {
+                    $("#yourTableId").DataTable({
+                      data: result,
+                      columns: [
+                        { data: "questionID" },
+                        { data: "question" },
+                        { data: "answerID" },
+                        { data: "answerTEXT" },
+                      ],
+                      paging: true,
+                      language: {
+                        paginate: {
+                          first: "First",
+                          previous: "Back",
+                          next: "Next",
+                          last: "Last",
+                        },
+                      },
+                    });
+                  } else {
+                    // ลบ DataTable เดิม
+                    $("#yourTableId").DataTable().destroy();
+
+                    // เพิ่มข้อมูลใหม่
+                    $("#yourTableId").DataTable({
+                      data: result,
+                      columns: [
+                        { data: "questionID" },
+                        { data: "question" },
+                        { data: "answerID" },
+                        { data: "answerTEXT" },
+                      ],
+                      paging: true,
+                      language: {
+                        paginate: {
+                          first: "First",
+                          previous: "Back",
+                          next: "Next",
+                          last: "Last",
+                        },
+                      },
+                    });
+                  }
+                });
+              })
+              .catch((error) => console.error(error));
+          }
+        </script>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        .welcome-page {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background-image: url('https://images.unsplash.com/photo-1586773860383-dab5f3bc1bcc?q=80&w=2027&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            background-position: center;
+        }
+        .component {
+            position: relative;
+            width: 100%;
+            /* ปรับขนาดตามขนาดจอ */
+            height: 100vh;
+            /* ปรับขนาดตามขนาดจอ */
+            background-image: url('https://images.unsplash.com/photo-1586773860383-dab5f3bc1bcc?q=80&w=2027&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            /* เปลี่ยนเป็น URL ของภาพที่คุณต้องการใช้ */
+            background-size: cover;
+            /* ปรับขนาดของภาพให้เต็มพื้นที่ */
+            background-position: center;
+            /* ตำแหน่งภาพให้อยู่ตรงกลาง */
+            /* filter: blur(1px); */
+            /* ทำให้ภาพเบลอ */
+            /* background-color: rgba(255, 255, 255, 0.5); */
+            /* สีพื้นหลังที่มองเห็นผ่านพื้นหลังเบลอ */
+            /* z-index:auto; */
+            /* ให้พื้นหลังเบลออยู่หน้าสุด */
+        }
+        
+
+        #numpad {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-template-rows: repeat(4, 100px);
+            grid-gap: 10px;
+            justify-content: center;
+            margin-top: 50px;
+        }
+
+        .key {
+            width: 100px;
+            height: 100px;
+            border: none;
+            background-color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+            border-radius: 50%; /* ทำให้มุมของปุ่มเป็นรูปวงกลม */
+        }
+        .none{
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+        }
+        .key:hover {
+            background-color: #e0e0e0;
+        }
+
+        .key:active {
+            outline: 2px solid #333;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .display {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        
+
+
+        .login-page {
+            width: 100%;
+            height: 100%;
+            /* background-color: #f0f0f0; */
+            transition: opacity 0.5s ease, visibility 0s 0.5s;
+            /* เพิ่ม transition เมื่อมีการเปลี่ยนค่า opacity และ visibility */
+            /* position: relative;
+            z-index: 1; */
+        }
+        h1{
+            color:black;
+        }
+        
+    </style>
+</head>
+
+<body>
+    
+    <div class="component">
+        <div class="login-page">
+            <div class="container">
+                <h1>ความดัน</h1>
+                <div class="display" id="enteredNumbers"></div>
+                <div id="numpad">
+                    <div class="key" onclick="pressKey(1)">1</div>
+                    <div class="key" onclick="pressKey(2)">2</div>
+                    <div class="key" onclick="pressKey(3)">3</div>
+                    <div class="none"></div>
+                    <div class="key" onclick="pressKey(4)">4</div>
+                    <div class="key" onclick="pressKey(5)">5</div>
+                    <div class="key" onclick="pressKey(6)">6</div>
+                    <div class="none"></div>
+                    <div class="key" onclick="pressKey(7)">7</div>
+                    <div class="key" onclick="pressKey(8)">8</div>
+                    <div class="key" onclick="pressKey(9)">9</div>
+                    <div class="none"></div>
+                    <div class="key" onclick="pressKey('delete')">Del</div>
+                    <div class="key" onclick="pressKey(0)">0</div>
+                    <div class="key" onclick="pressKey('/')">/</div>
+                    <div class="key" onclick="sevetosever()">Enter</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script></script>
+    <script>
+        let enteredNumbers = '';
+        
+
+        function pressKey(key) {
+            if (key === 'delete') {
+                enteredNumbers = enteredNumbers.slice(0, -1);
+            } else {
+                enteredNumbers += key;
+            }
+            document.getElementById('enteredNumbers').innerText = enteredNumbers;
+        }
+
+        function sevetosever() {
+            const queryParams = new URLSearchParams(window.location.search);
+            const userID = queryParams.get("userID");
+            // กำหนดข้อมูลที่ต้องการส่ง
+            const data = new URLSearchParams();
+            data.append("pressure", enteredNumbers);
+            data.append("userID", userID);
+            const requestOptions = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: data,
+                redirect: "follow",
+            };
+        
+            fetch("http://localhost/api/Smart-KIOS/api/INSERTpressure.php", requestOptions)
+            .then((response) => response.text())
+            .then((result) => {
+
+                // เมื่อเก็บข้อมูลเสร็จสิ้น ลิ้งไปยังหน้าใหม่
+                window.location.href = "report.html?userID="+userID;
+            })
+            .catch((error) => console.error(error));
+        }
+        
+    </script>
+</body>
+
+</html>

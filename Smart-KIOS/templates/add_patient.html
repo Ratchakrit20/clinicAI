@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- เพิ่ม link ไปยัง DataTables CSS -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.min.css"
+    />
+
+    <script
+      type="text/javascript"
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+    ></script>
+    <!-- เพิ่ม script ไปยัง DataTables JS -->
+    <script
+      type="text/javascript"
+      src="https://cdn.datatables.net/2.0.1/js/dataTables.min.js"
+    ></script>
+
+    <title>Admin Page</title>
+    <style>
+      /* styles.css */
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 0;
+      }
+
+      .blur-background {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        background-image: url("https://i.pinimg.com/originals/32/ba/d4/32bad4902880c35411aa8ffa657c170c.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        /*filter: blur(10px);*/
+        overflow: auto; /* เพิ่ม overflow: hidden เพื่อป้องกันการแสดงเลื่อนบาร์เลื่อน */
+      }
+      
+      /* ปรับแต่งสไตล์ของรูปภาพใน div */
+      .blur-background img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: blur(5px); /* ใช้กรอง blur ในรูปภาพเอง */
+      }
+
+      .container {
+        width: 80%;
+        /* height: 100vh; */
+        margin: 20px auto;
+      }
+
+      h1 {
+        text-align: center;
+        /* margin-top: 30px; */
+        margin-bottom: 30px;
+        color: #fff;
+      }
+
+      form {
+        margin-bottom: 20px;
+        background-color: rgba(255, 255, 255, 0.681);
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      form:hover {
+        background-color: #f5f5f5;
+      }
+
+      
+
+      /* .table-ani{
+            transition: all 0.3s ease;
+        } */
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: rgba(255, 255, 255, 0.681);
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      th,
+      td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #f2f2f2;
+        text-align: left;
+      }
+
+      tr:hover {
+        background-color: #f5f5f5;
+        transition: all 0.3s ease;
+      }
+
+      .delete-form {
+        display: inline-block;
+      }
+
+      .flex-container{
+        display:flex;
+        flex-wrap:wrap;
+        gap;8px
+      }
+      
+
+      
+      .id{
+        flex:1 0 140px;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .text{
+        flex:1 0 120px;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button{
+        flex:1 0 60px;
+        background-color: #4caf50;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      @media only screen and (max-width: 600px) {
+        .container {
+          width: 80%;
+        }
+
+        form {
+          width: 80%;
+          margin: 0 auto 20px auto;
+        }
+
+        form input[type="text"] {
+          width: calc(100% - 20px);
+        }
+
+        table {
+          width: 90%;
+          margin: 0 auto;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="blur-background">
+      <br />
+      <h1>Admin Page</h1>
+      <div class="container">
+        <table id="yourTableId">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>ชื่อ</th>
+              <th>นามสกุล</th>
+              <th>บทบาท</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- ข้อมูลจะถูกเพิ่มที่นี่ -->
+          </tbody>
+        </table>
+        <script>
+          const requestOptions = {
+            method: "GET",
+            redirect: "follow",
+          };
+
+          fetch(
+            "http://localhost/api/Smart-KIOS/api/read.php",
+            requestOptions
+          )
+            .then((response) => response.json())
+            .then((result) => {
+              //console.log(result);
+              // ตรวจสอบว่า result ไม่เป็น null หรือ undefined
+              if (result) {
+                // วนลูปผลลัพธ์
+                result.forEach((q) => {
+                  //console.log(q);
+
+                  // สร้าง <tr> ใน HTML
+                  var tr = document.createElement("tr");
+
+                  // สร้าง <td> และใส่ข้อมูลลงไป
+                  var tduserID = document.createElement("td");
+                  tduserID.textContent = q.userID;
+                  tr.appendChild(tduserID);
+
+                  var tdname = document.createElement("td");
+                  tdname.textContent = q.name;
+                  tr.appendChild(tdname);
+
+                  var tdlastname = document.createElement("td");
+                  tdlastname.textContent = q.lastname;
+                  tr.appendChild(tdlastname);
+
+                  var tdrole = document.createElement("td");
+                  tdrole.textContent = q.role;
+                  tr.appendChild(tdrole);
+
+                  // เพิ่ม <tr> ลงใน tbody ของตาราง
+                  document
+                    .getElementById("yourTableId")
+                    .getElementsByTagName("tbody")[0]
+                    .appendChild(tr);
+
+                  // เรียกใช้ DataTables
+                  $(document).ready(function () {
+                    // ตรวจสอบว่า DataTable ยังไม่ถูกเริ่ม
+                    if (!$.fn.DataTable.isDataTable("#yourTableId")) {
+                      $("#yourTableId").DataTable({
+                        data: result,
+                        columns: [
+                          { data: "userID" },
+                          { data: "name" },
+                          { data: "lastname" },
+                          { data: "role" },
+                        ],
+                        paging: true, // ตรวจสอบให้แน่ใจว่า paging ถูกเปิดใช้งาน
+                        language: {
+                          // กำหนดข้อความและปุ่มใน DataTable
+
+                          paginate: {
+                            first: "First",
+                            previous: "Back",
+                            next: "Next",
+                            last: "Last",
+                          },
+                        },
+                      });
+                    }
+                  });
+                });
+              }
+            })
+            .catch((error) => console.error(error));
+        </script>
+        <script></script>
+        <form onsubmit="event.preventDefault(); sendUpdateuserToServer();">
+          <div class="flex-container">
+          <input class="id" type="text" id="userID" name="userID" placeholder="ID" required/>
+          <input class="text" type="text" id="name" name="name" placeholder="ชื่อ" required/>
+          <input class="id" type="text" id="lastname" name="lastname" placeholder="นามสกุล" required/>
+          <input class="text" type="text" id="role" name="role" placeholder="บทบาท" required/>
+          <button type="submit">Add a Patient</button>
+          </div>
+        </form>
+        <button type="button" onclick="goBack()">Back</button>
+        <script>
+            function goBack() {
+              window.history.back();
+            }
+        </script>
+        <script>
+          function senduserToServer() {
+            // รับค่าจากฟอร์ม
+            const userID = document.getElementById("userID").value;
+            const name = document.getElementById("name").value;
+            const lastname = document.getElementById("lastname").value;
+            const role = document.getElementById("role").value;
+
+            // ตรวจสอบค่าที่ได้รับ
+            console.log("userID", userID);
+            console.log("questionId", questionId);
+
+            // ตัวอย่างการเรียกใช้งานฟังก์ชันสำหรับส่งข้อมูลไปยังเซิร์ฟเวอร์
+            sendUpdateQuestionToServer(text, questionId);
+          }
+          function sendUpdateuserToServer() {
+            // รับค่าจากฟอร์ม
+            const userID = document.getElementById("userID").value;
+            const name = document.getElementById("name").value;
+            const lastname = document.getElementById("lastname").value;
+            const role = document.getElementById("role").value;
+            // กำหนดข้อมูลที่ต้องการส่ง
+            console.log("userID", userID);
+            console.log("name", name);
+            const update = new URLSearchParams();
+            update.append("userID", userID);
+            update.append("name", name);
+            update.append("lastname", lastname);
+            update.append("role", role);
+            console.log("data", update);
+            const requestOptions = {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+              body: update,
+              redirect: "follow",
+            };
+
+            // กำหนด URL ที่ถูกต้อง
+            const url =
+              "http://localhost/api/Smart-KIOS/api/INSERTuser.php";
+
+            fetch(url, requestOptions)
+              .then((response) => response.text())
+              .then((update) => {
+                console.log(update);
+                // เรียกใช้ฟังก์ชันอัปเดตตาราง
+                updateTable();
+              })
+              .catch((error) => console.error(error));
+          }
+          function updateTable() {
+            const requestOptions = {
+              method: "GET",
+              redirect: "follow",
+            };
+
+            fetch(
+              "http://localhost/api/Smart-KIOS/api/read.php",
+              requestOptions
+            )
+              .then((response) => response.json())
+              .then((result) => {
+                // เรียกใช้ DataTables
+                $(document).ready(function () {
+                  // ตรวจสอบว่า DataTable ยังไม่ถูกเริ่ม
+                  if (!$.fn.DataTable.isDataTable("#yourTableId")) {
+                    $("#yourTableId").DataTable({
+                      data: result,
+                      columns: [
+                        { data: "userID" },
+                        { data: "name" },
+                        { data: "lastname" },
+                        { data: "role" },
+                      ],
+                      paging: true,
+                      language: {
+                        paginate: {
+                          first: "First",
+                          previous: "Back",
+                          next: "Next",
+                          last: "Last",
+                        },
+                      },
+                    });
+                  } else {
+                    // ลบ DataTable เดิม
+                    $("#yourTableId").DataTable().destroy();
+
+                    // เพิ่มข้อมูลใหม่
+                    $("#yourTableId").DataTable({
+                      data: result,
+                      columns: [
+                        { data: "userID" },
+                        { data: "name" },
+                        { data: "lastname" },
+                        { data: "role" },
+                      ],
+                      paging: true,
+                      language: {
+                        paginate: {
+                          first: "First",
+                          previous: "Back",
+                          next: "Next",
+                          last: "Last",
+                        },
+                      },
+                    });
+                  }
+                });
+              })
+              .catch((error) => console.error(error));
+          }
+        </script>
+      </div>
+    </div>
+  </body>
+</html>
