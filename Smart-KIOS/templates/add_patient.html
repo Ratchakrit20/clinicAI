@@ -172,6 +172,7 @@
           <thead>
             <tr>
               <th>ID</th>
+              <th>รหัสนักศึกษา</th>
               <th>ชื่อ</th>
               <th>นามสกุล</th>
               <th>บทบาท</th>
@@ -208,6 +209,10 @@
                   tduserID.textContent = q.userID;
                   tr.appendChild(tduserID);
 
+                  var tdstudentID = document.createElement("td");
+                  tdstudentID.textContent = q.student;
+                  tr.appendChild(tdstudentID);
+
                   var tdname = document.createElement("td");
                   tdname.textContent = q.name;
                   tr.appendChild(tdname);
@@ -234,6 +239,7 @@
                         data: result,
                         columns: [
                           { data: "userID" },
+                          { data: "studentID" },
                           { data: "name" },
                           { data: "lastname" },
                           { data: "role" },
@@ -260,7 +266,7 @@
         <script></script>
         <form onsubmit="event.preventDefault(); sendUpdateuserToServer();">
           <div class="flex-container">
-          <input class="id" type="text" id="userID" name="userID" placeholder="ID" required/>
+          <input class="id" type="text" id="studentID" name="userID" placeholder="รหัสนักศึกษา" required/>
           <input class="text" type="text" id="name" name="name" placeholder="ชื่อ" required/>
           <input class="id" type="text" id="lastname" name="lastname" placeholder="นามสกุล" required/>
           <input class="text" type="text" id="role" name="role" placeholder="บทบาท" required/>
@@ -276,7 +282,7 @@
         <script>
           function senduserToServer() {
             // รับค่าจากฟอร์ม
-            const userID = document.getElementById("userID").value;
+            const userID = document.getElementById("studentID").value;
             const name = document.getElementById("name").value;
             const lastname = document.getElementById("lastname").value;
             const role = document.getElementById("role").value;
@@ -290,15 +296,15 @@
           }
           function sendUpdateuserToServer() {
             // รับค่าจากฟอร์ม
-            const userID = document.getElementById("userID").value;
+            const studentID = document.getElementById("studentID").value;
             const name = document.getElementById("name").value;
             const lastname = document.getElementById("lastname").value;
             const role = document.getElementById("role").value;
             // กำหนดข้อมูลที่ต้องการส่ง
-            console.log("userID", userID);
-            console.log("name", name);
+            //console.log("userID", userID);
+            console.log("name", studentID);
             const update = new URLSearchParams();
-            update.append("userID", userID);
+            update.append("studentID", studentID);
             update.append("name", name);
             update.append("lastname", lastname);
             update.append("role", role);
@@ -345,6 +351,7 @@
                       data: result,
                       columns: [
                         { data: "userID" },
+                        { data: "studentID" },
                         { data: "name" },
                         { data: "lastname" },
                         { data: "role" },
@@ -368,6 +375,7 @@
                       data: result,
                       columns: [
                         { data: "userID" },
+                        { data: "studentID" },
                         { data: "name" },
                         { data: "lastname" },
                         { data: "role" },

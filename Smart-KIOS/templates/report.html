@@ -44,16 +44,28 @@
 
       .button{
         position: absolute;
+        bottom: 70px; /* ปรับค่าตำแหน่งของปุ่มจากด้านล่าง */
+        right: 10px; /* ปรับค่าตำแหน่งของปุ่มจากด้านขวา */
+      }
+      .home{
+        position: absolute;
         bottom: 20px; /* ปรับค่าตำแหน่งของปุ่มจากด้านล่าง */
         right: 10px; /* ปรับค่าตำแหน่งของปุ่มจากด้านขวา */
       }
-      
 
       /* จัดการแสดงผลภายใน .print */
       .paragraph {
         padding-left: 40px;
       }
-
+      @media only screen and (max-width: 800px) {
+        /* ปรับขนาดหน้าจอเมื่อความกว้างไม่เกิน 768px */
+        .print {
+          position: relative;
+          width: auto; /* ขนาดของ A4 */
+        }
+      }
+    
+      
       
     </style>
   </head>
@@ -78,7 +90,7 @@
 
               //console.log(questionId);
               document.getElementById(`${questionId}`).innerHTML =
-                jsonObj[i].question + ":";
+                jsonObj[i].question + " : ";
             }
           })
           .catch((error) => console.error(error));
@@ -122,6 +134,31 @@
               }
             })
             .catch((error) => console.error(error));
+            fetch(
+              "http://localhost/api/Smart-KIOS/api/SELECTPressure.php",
+              requestOptions1
+            )
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then((result) => {
+                if (result.length === 0) {
+                    throw new Error("No data found");
+                }
+              //var jsonObj = JSON.parse(result);
+              console.log(result.users[0].pressure);
+              console.log(result.users.length);
+              
+              
+              
+                //console.log(questionId);
+              document.getElementById(`Pressure`).innerHTML = result.users[0].pressure + " mmHg.";
+              
+            })
+            .catch((error) => console.error(error));
     </script>
     <div class="component">
       <div class="print">
@@ -136,10 +173,20 @@
         <label id="Question8" class="paragraph"></label><label id="answer8"></label><br>
         <label id="Question9" class="paragraph"></label><label id="answer9"></label><br>
         <label id="Question10" class="paragraph"></label><label id="answer10"></label><br>
-        <button type="button" class="btn btn-outline-success button" name="button" id="print" onclick="window.print()">
+        <label class="paragraph">ความดัน : </label><label id="Pressure"></label><br>
+        <button type="button" class="btn btn-success button" name="button" id="print" onclick="window.print()">
           PRINT
         </button>
+        <button type="button" class="btn btn-info home" name="button" id="print" onclick="home()">
+        HOME
+        </button>
       </div>
+      
+      <script>
+        function home(){
+          window.location.href = "login-sos.html";
+        }
+      </script>
     </div>
   </body>
 </html>

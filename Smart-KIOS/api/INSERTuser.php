@@ -3,7 +3,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-type: application/json; charset=utf-8");
 include 'db.php' ;
 // กำหนดค่าตัวแปร
-$userID = $_POST['userID'];
+$studentID = $_POST['studentID'];
 $name = $_POST['name'];
 $lastname = $_POST['lastname'];
 $role = $_POST['role'];
@@ -11,11 +11,11 @@ try {
     
 
     // กำหนด query
-    $sql = "INSERT INTO `user`(`userID`, `name`, `lastname`, `role`) VALUES (?,?,?,?)";
+    $sql = "INSERT INTO `user`(`studentID`,`name`, `lastname`, `role`) VALUES (?,?,?,?)";
     $stmt = $dbh->prepare($sql);
 
     // Bind parameters
-    $stmt->bindParam(1, $userID);
+    $stmt->bindParam(1, $studentID);
     $stmt->bindParam(2, $name);
     $stmt->bindParam(3, $lastname);
     $stmt->bindParam(4, $role);
